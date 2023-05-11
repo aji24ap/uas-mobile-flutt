@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Alza Laundry',
+      title: 'Alza-Laundry',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -89,7 +89,7 @@ class _TestAPIState extends State<TestAPI> {
                   decoration: const InputDecoration(labelText: 'ID Invoice'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'ID Invoice harus diisi.';
+                      return 'ID Invoice harus diisi, pastikan Anda menulisnya dengan benar.';
                     }
                     return null;
                   },
