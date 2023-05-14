@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Alza-Laundry',
+      title: 'Alza Laundry',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -63,7 +63,8 @@ class _TestAPIState extends State<TestAPI> {
       }
     } catch (error) {
       setState(() {
-        _error = 'Terjadi kesalahan saat menghubungi server, pastikan perangkat Anda terhubung ke internet.';
+        _error =
+            'Terjadi kesalahan saat menghubungi server, pastikan perangkat Anda terhubung ke internet.';
         _invoice = null;
       });
     }
@@ -89,7 +90,7 @@ class _TestAPIState extends State<TestAPI> {
                   decoration: const InputDecoration(labelText: 'ID Invoice'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'ID Invoice harus diisi, pastikan Anda menulisnya dengan benar.';
+                      return 'ID Invoice harus diisi.';
                     }
                     return null;
                   },
@@ -160,9 +161,12 @@ class _TestAPIState extends State<TestAPI> {
                       future: Future.delayed(Duration.zero),
                       builder:
                           (BuildContext context, AsyncSnapshot<void> snapshot) {
+                        bool dialogShown = false;
                         return Column(
                           children: _invoice.map<Widget>((invoice) {
-                            if (invoice['status_transaksi'] == 'Selesai') {
+                            if (invoice['status_transaksi'] == 'Selesai' &&
+                                !dialogShown) {
+                              dialogShown = true;
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 showDialog(
                                   context: context,
