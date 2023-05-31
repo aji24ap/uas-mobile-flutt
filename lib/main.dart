@@ -189,12 +189,22 @@ class _TestAPIState extends State<TestAPI> {
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
-                                            const Text(
-                                              'Cucian Sudah Bisa Diambil',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
+                                            Row(
+                                              children: const [
+                                                Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.green,
+                                                  size: 32,
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  'Cucian Sudah Bisa Diambil',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(height: 16),
                                             const Text(
