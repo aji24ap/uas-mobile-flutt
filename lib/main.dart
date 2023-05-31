@@ -139,15 +139,27 @@ class _TestAPIState extends State<TestAPI> {
                                           : Colors.red,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: Text(
-                                  invoice['status_transaksi'] == 'Selesai'
-                                      ? 'Cucian Sudah Bisa Diambil'
-                                      : 'Cucian Sedang Diproses',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      invoice['status_transaksi'] == 'Selesai'
+                                          ? Icons.check_circle
+                                          : Icons.pending,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      invoice['status_transaksi'] == 'Selesai'
+                                          ? 'Cucian Sudah Bisa Diambil'
+                                          : 'Cucian Sedang Diproses',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
