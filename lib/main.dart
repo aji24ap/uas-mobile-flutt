@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class TestAPI extends StatefulWidget {
-  const TestAPI({super.key});
+  const TestAPI({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -30,10 +30,8 @@ class TestAPI extends StatefulWidget {
 class _TestAPIState extends State<TestAPI> {
   final _formKey = GlobalKey<FormState>();
   final _idInvoiceController = TextEditingController();
-  // ignore: prefer_typing_uninitialized_variables
-  var _error;
-  // ignore: prefer_typing_uninitialized_variables
-  var _invoice;
+  String? _error;
+  List<Map<String, dynamic>>? _invoice;
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -101,12 +99,11 @@ class _TestAPIState extends State<TestAPI> {
                   child: const Text('Cek Status'),
                 ),
                 const SizedBox(height: 16),
-                if (_error != null) ...[
+                if (_error != null)
                   Text(
-                    _error,
+                    _error!,
                     style: const TextStyle(color: Colors.red),
                   ),
-                ],
                 if (_invoice != null) ...[
                   Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -120,7 +117,7 @@ class _TestAPIState extends State<TestAPI> {
                           DataColumn(label: Text('Nama Pelanggan')),
                           DataColumn(label: Text('Status')),
                         ],
-                        rows: _invoice.map<DataRow>((invoice) {
+                        rows: _invoice!.map<DataRow>((invoice) {
                           return DataRow(cells: [
                             DataCell(Text(invoice['id_invoice'].toString())),
                             DataCell(Text(invoice['transaksi_tanggal'])),
@@ -168,17 +165,28 @@ class _TestAPIState extends State<TestAPI> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: FutureBuilder(
-                      future: Future.delayed(Duration.zero),
-                      builder:
-                          (BuildContext context, AsyncSnapshot<void> snapshot) {
-                        bool dialogShown = false;
-                        return Column(
-                          children: _invoice.map<Widget>((invoice) {
-                            if (invoice['status_transaksi'] == 'Selesai' &&
-                                !dialogShown) {
-                              dialogShown = true;
+                  LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return SizedBox(
+                        height: constraints.maxHeight,
+                        child: FutureBuilder<void>(
+                          future: Future.delayed(Duration.zero),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<void> snapshot) {
+                            bool dialogShown = false;
+                            List<Map<String, dynamic>> pendingInvoices = [];
+
+                            for (var invoice in _invoice!) {
+                              if ((invoice['status_transaksi'] == 'Selesai' ||
+                                      invoice['status_transaksi'] == 'Baru') &&
+                                  !dialogShown) {
+                                dialogShown = true;
+                                pendingInvoices.add(invoice);
+                              }
+                            }
+
+                            if (pendingInvoices.isNotEmpty) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 showDialog(
                                   context: context,
@@ -198,7 +206,7 @@ class _TestAPIState extends State<TestAPI> {
                                                 ),
                                                 SizedBox(width: 8),
                                                 Text(
-                                                  'Cucian Sudah Bisa Diambil',
+                                                  'Status Transaksi',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 20,
@@ -207,9 +215,9 @@ class _TestAPIState extends State<TestAPI> {
                                               ],
                                             ),
                                             const SizedBox(height: 16),
-                                            const Text(
-                                              'Silakan datang ke outlet untuk mengambil cucian Anda.',
-                                              style: TextStyle(
+                                            Text(
+                                              'Cucian ${pendingInvoices.length > 1 ? 'sedang diproses' : 'sudah bisa diambil'}',
+                                              style: const TextStyle(
                                                 fontSize: 16,
                                               ),
                                             ),
@@ -235,10 +243,10 @@ class _TestAPIState extends State<TestAPI> {
                               });
                             }
                             return Container();
-                          }).toList(),
-                        );
-                      },
-                    ),
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ],
               ],
