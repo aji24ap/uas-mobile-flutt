@@ -1,10 +1,12 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Alza Laundry',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'CosmicSans',
       ),
       home: const TestAPI(),
     );
@@ -25,6 +28,7 @@ class TestAPI extends StatefulWidget {
   const TestAPI({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _TestAPIState createState() => _TestAPIState();
 }
 
@@ -125,14 +129,21 @@ class _TestAPIState extends State<TestAPI> {
                               DataColumn(label: Text('ID Invoice')),
                               DataColumn(label: Text('Tanggal')),
                               DataColumn(label: Text('Nama Pelanggan')),
+                              DataColumn(label: Text('Paket Laundry')),
                               DataColumn(label: Text('Status')),
                             ],
                             rows: _invoice.map<DataRow>((invoice) {
+                              final formattedDate =
+                                  DateFormat('dd MMMM yyyy', 'id_ID')
+                                      .format(DateTime.parse(
+                                          invoice['transaksi_tanggal']));
                               return DataRow(cells: [
                                 DataCell(
-                                    Text(invoice['id_invoice'].toString())),
-                                DataCell(Text(invoice['transaksi_tanggal'])),
+                                  Text(invoice['id_invoice'].toString()),
+                                ),
+                                DataCell(Text(formattedDate)),
                                 DataCell(Text(invoice['nama_konsumen'])),
+                                DataCell(Text(invoice['nama_produk'])),
                                 DataCell(
                                   Container(
                                     width: 180,
@@ -162,8 +173,8 @@ class _TestAPIState extends State<TestAPI> {
                                         Text(
                                           invoice['status_transaksi'] ==
                                                   'Selesai'
-                                              ? 'Cucian Sudah Bisa Diambil'
-                                              : 'Cucian Sedang Diproses',
+                                              ? 'Sudah Bisa Diambil'
+                                              : 'Sedang Diproses',
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
